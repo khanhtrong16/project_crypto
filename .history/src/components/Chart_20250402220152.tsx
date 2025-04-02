@@ -23,7 +23,7 @@ export default function Chart() {
     const [show, setShow] = useState<boolean>(false);
     const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
     const [darkMode, setDarkMode] = useState<boolean>(true);
-    const chartContainer = useRef<HTMLDivElement | null>(null);
+    const chartContainer = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
     const candlestickSeries = useRef<ISeriesApi<"Candlestick">>(null);
     const volumeSeries = useRef<ISeriesApi<"Histogram">>(null);

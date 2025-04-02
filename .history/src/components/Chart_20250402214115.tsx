@@ -1,8 +1,7 @@
 "use client";
 import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/lib/api-binance";
 import { CandleData, PriceData } from "@/types/interfaces";
-import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
-import Image from "next/image";
+import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
 
@@ -23,10 +22,10 @@ export default function Chart() {
     const [show, setShow] = useState<boolean>(false);
     const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
     const [darkMode, setDarkMode] = useState<boolean>(true);
-    const chartContainer = useRef<HTMLDivElement | null>(null);
-    const chartRef = useRef<IChartApi | null>(null);
-    const candlestickSeries = useRef<ISeriesApi<"Candlestick">>(null);
-    const volumeSeries = useRef<ISeriesApi<"Histogram">>(null);
+    const chartContainer = useRef<any>(null);
+    const chartRef = useRef<any>(null);
+    const candlestickSeries = useRef<any>(null);
+    const volumeSeries = useRef<any>(null);
     useEffect(() => {
         const fetchCandles = async () => {
             const fetchedData = await GetCandles(time, crtytoName);
@@ -135,7 +134,7 @@ export default function Chart() {
     useEffect(() => {
         const resizeChart = () => {
             if (chartRef.current) {
-                chartRef.current.resize(chartContainer.current?.clientWidth, chartContainer.current?.clientHeight);
+                chartRef.current.resize(chartContainer.current.clientWidth, chartContainer.current.clientHeight);
             }
         };
         window.addEventListener("resize", resizeChart);
@@ -150,10 +149,11 @@ export default function Chart() {
 
             const priceOneMinute = await GetPrice1MinuteAgo(crtytoName);
             const oneMinuteAgo = parseFloat(priceOneMinute);
+
             SetPrices({ current, oneMinuteAgo });
         };
         getPrices();
-    }, [show, crtytoName]);
+    }, [show]);
 
     const handlePrice = () => {
         setShow(!show);
@@ -175,8 +175,8 @@ export default function Chart() {
             <div className="w-full lg:w-3/4 xl:w-4/5 flex gap-2 flex-col">
                 <div
                     className={`px-3 py-4 sm:py-3 w-full flex flex-wrap justify-between items-center gap-3 
-                    ${darkMode ? "bg-[#131722]" : "bg-[#F1F5F9]"}
-                    rounded-t-lg shadow-sm transition-colors duration-300`}
+        ${darkMode ? "bg-[#131722]" : "bg-[#F1F5F9]"}
+        rounded-t-lg shadow-sm transition-colors duration-300`}
                 >
                     <strong className="text-lg sm:text-xl font-bold">{crtytoName}</strong>
 
@@ -184,7 +184,7 @@ export default function Chart() {
                         <button
                             onClick={toggleDarkMode}
                             className={`p-2.5 rounded-md transition-colors duration-200 
-                                     ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"}`}
+                ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"}`}
                             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                         >
                             {darkMode ? <FaMoon size={18} /> : <FaSun size={18} />}
@@ -193,11 +193,11 @@ export default function Chart() {
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
                             className={`p-2.5 w-28 rounded-md border-2 hover:border-gray-400 focus:outline-none transition-all duration-200 
-                                        ${
-                                            darkMode
-                                                ? "bg-gray-800 text-white border-gray-700 focus:border-sky-500"
-                                                : "bg-white text-black border-gray-300 focus:border-sky-500"
-                                        }`}
+                ${
+                    darkMode
+                        ? "bg-gray-800 text-white border-gray-700 focus:border-sky-500"
+                        : "bg-white text-black border-gray-300 focus:border-sky-500"
+                }`}
                             aria-label="Select time frame"
                         >
                             {times.map((item, index) => (
@@ -239,7 +239,7 @@ export default function Chart() {
                                         : "hover:bg-gray-200"
                                 }`}
                             >
-                                <Image
+                                <img
                                     className="w-7 h-7 rounded-full object-cover"
                                     src={item.cryptoImage || "/placeholder.svg"}
                                     alt={item.cryptoName}

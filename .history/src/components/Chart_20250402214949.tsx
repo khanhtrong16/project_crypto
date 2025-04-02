@@ -1,8 +1,7 @@
 "use client";
 import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/lib/api-binance";
 import { CandleData, PriceData } from "@/types/interfaces";
-import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
-import Image from "next/image";
+import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
 
@@ -23,10 +22,10 @@ export default function Chart() {
     const [show, setShow] = useState<boolean>(false);
     const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
     const [darkMode, setDarkMode] = useState<boolean>(true);
-    const chartContainer = useRef<HTMLDivElement | null>(null);
-    const chartRef = useRef<IChartApi | null>(null);
-    const candlestickSeries = useRef<ISeriesApi<"Candlestick">>(null);
-    const volumeSeries = useRef<ISeriesApi<"Histogram">>(null);
+    const chartContainer = useRef<any>(null);
+    const chartRef = useRef<any>(null);
+    const candlestickSeries = useRef<any>(null);
+    const volumeSeries = useRef<any>(null);
     useEffect(() => {
         const fetchCandles = async () => {
             const fetchedData = await GetCandles(time, crtytoName);
@@ -135,7 +134,7 @@ export default function Chart() {
     useEffect(() => {
         const resizeChart = () => {
             if (chartRef.current) {
-                chartRef.current.resize(chartContainer.current?.clientWidth, chartContainer.current?.clientHeight);
+                chartRef.current.resize(chartContainer.current.clientWidth, chartContainer.current.clientHeight);
             }
         };
         window.addEventListener("resize", resizeChart);
@@ -148,12 +147,13 @@ export default function Chart() {
             const priceCurrent = await GetCryptoInfo(crtytoName);
             const current = parseFloat(priceCurrent.data.lastPrice);
 
-            const priceOneMinute = await GetPrice1MinuteAgo(crtytoName);
+            const priceOneMinute = parseFloat(await GetPrice1MinuteAgo(crtytoName));
             const oneMinuteAgo = parseFloat(priceOneMinute);
+
             SetPrices({ current, oneMinuteAgo });
         };
         getPrices();
-    }, [show, crtytoName]);
+    }, [show]);
 
     const handlePrice = () => {
         setShow(!show);
@@ -239,7 +239,7 @@ export default function Chart() {
                                         : "hover:bg-gray-200"
                                 }`}
                             >
-                                <Image
+                                <img
                                     className="w-7 h-7 rounded-full object-cover"
                                     src={item.cryptoImage || "/placeholder.svg"}
                                     alt={item.cryptoName}

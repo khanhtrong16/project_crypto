@@ -133,12 +133,8 @@ export default function Chart() {
 
     useEffect(() => {
         const resizeChart = () => {
-            if (chartRef.current && chartContainer.current) {
-                const width = chartContainer.current.clientWidth;
-                const height = chartContainer.current.clientHeight;
-                if (typeof width === "number" && typeof height === "number") {
-                    chartRef.current.resize(width, height);
-                }
+            if (chartRef.current) {
+                chartRef.current.resize(chartContainer.current?.clientWidth, chartContainer.current?.clientHeight);
             }
         };
         window.addEventListener("resize", resizeChart);

@@ -3,7 +3,7 @@ import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/li
 import { CandleData, PriceData } from "@/types/interfaces";
 import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
-import { FaMoon, FaSun, FaBars } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export default function Chart() {
     const times = [
@@ -238,12 +238,12 @@ export default function Chart() {
                         }`}
                     >
                         <h2 className="text-lg font-semibold">Crypto List</h2>
-                        <span className="lg:hidden">
-                            <FaBars
-                                className={`text-xl transition-colors duration-200 ${
-                                    darkMode ? "text-white hover:text-gray-400" : "text-black hover:text-gray-600"
-                                }`}
-                            />
+                        <span
+                            className={`lg:hidden px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                                darkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-300"
+                            }`}
+                        >
+                            {isNavOpen ? "▲" : "▼"}
                         </span>
                     </div>
                     <ul

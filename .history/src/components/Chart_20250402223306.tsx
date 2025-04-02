@@ -3,7 +3,7 @@ import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/li
 import { CandleData, PriceData } from "@/types/interfaces";
 import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
-import { FaMoon, FaSun, FaBars } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export default function Chart() {
     const times = [
@@ -22,16 +22,10 @@ export default function Chart() {
     const [show, setShow] = useState<boolean>(false);
     const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
     const [darkMode, setDarkMode] = useState<boolean>(true);
-    const [isNavOpen, setIsNavOpen] = useState(false);
     const chartContainer = useRef<HTMLDivElement | null>(null);
     const chartRef = useRef<IChartApi | null>(null);
     const candlestickSeries = useRef<ISeriesApi<"Candlestick">>(null);
     const volumeSeries = useRef<ISeriesApi<"Histogram">>(null);
-
-    const toggleNav = () => {
-        setIsNavOpen(!isNavOpen);
-    };
-
     useEffect(() => {
         const fetchCandles = async () => {
             const fetchedData = await GetCandles(time, crtytoName);
@@ -185,7 +179,7 @@ export default function Chart() {
         >
             <div className="w-full lg:w-3/4 xl:w-4/5 flex gap-2 flex-col">
                 <div
-                    className={`px-3 py-4 sm:py-3 w-full flex flex-wrap justify-between items-center gap-3
+                    className={`px-3 py-4 sm:py-3 w-full flex flex-wrap justify-between items-center gap-3 
                     ${darkMode ? "bg-[#131722]" : "bg-[#F1F5F9]"}
                     rounded-t-lg shadow-sm transition-colors duration-300`}
                 >
@@ -193,7 +187,7 @@ export default function Chart() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={toggleDarkMode}
-                            className={`p-2.5 rounded-md transition-colors duration-200
+                            className={`p-2.5 rounded-md transition-colors duration-200 
                                      ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"}`}
                             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                         >
@@ -202,7 +196,7 @@ export default function Chart() {
                         <select
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            className={`p-2.5 w-28 rounded-md border-2 hover:border-gray-400 focus:outline-none transition-all duration-200
+                            className={`p-2.5 w-28 rounded-md border-2 hover:border-gray-400 focus:outline-none transition-all duration-200 
                                         ${
                                             darkMode
                                                 ? "bg-gray-800 text-white border-gray-700 focus:border-sky-500"
@@ -219,8 +213,8 @@ export default function Chart() {
                     </div>
                 </div>
                 <div
-                    className={`w-full flex-grow overflow-hidden border transition-colors duration-300
-                                ${darkMode ? "border-gray-800" : "border-gray-200"}
+                    className={`w-full flex-grow overflow-hidden border transition-colors duration-300 
+                                ${darkMode ? "border-gray-800" : "border-gray-200"} 
                                 h-[400px] sm:h-[500px] md:h-[600px] lg:h-full rounded-b-lg`}
                     ref={chartContainer}
                 ></div>
@@ -231,26 +225,8 @@ export default function Chart() {
                 } shadow-sm transition-colors duration-300`}
             >
                 <div className="p-4 flex-grow">
-                    <div
-                        onClick={toggleNav}
-                        className={`flex justify-between items-center mb-3 cursor-pointer lg:cursor-default ${
-                            darkMode ? "text-white" : "text-black"
-                        }`}
-                    >
-                        <h2 className="text-lg font-semibold">Crypto List</h2>
-                        <span className="lg:hidden">
-                            <FaBars
-                                className={`text-xl transition-colors duration-200 ${
-                                    darkMode ? "text-white hover:text-gray-400" : "text-black hover:text-gray-600"
-                                }`}
-                            />
-                        </span>
-                    </div>
-                    <ul
-                        className={`flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 custom-scrollbar transition-all duration-300 ${
-                            isNavOpen ? "block" : "hidden"
-                        } lg:block`}
-                    >
+                    <h2 className="text-lg font-semibold mb-3">Crypto List</h2>
+                    <ul className="flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 custom-scrollbar">
                         {cryptoCoins.map((item, index) => (
                             <li
                                 key={index}

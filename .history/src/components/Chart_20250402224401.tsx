@@ -3,7 +3,7 @@ import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/li
 import { CandleData, PriceData } from "@/types/interfaces";
 import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
-import { FaMoon, FaSun, FaBars } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export default function Chart() {
     const times = [
@@ -22,16 +22,10 @@ export default function Chart() {
     const [show, setShow] = useState<boolean>(false);
     const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
     const [darkMode, setDarkMode] = useState<boolean>(true);
-    const [isNavOpen, setIsNavOpen] = useState(false);
     const chartContainer = useRef<HTMLDivElement | null>(null);
     const chartRef = useRef<IChartApi | null>(null);
     const candlestickSeries = useRef<ISeriesApi<"Candlestick">>(null);
     const volumeSeries = useRef<ISeriesApi<"Histogram">>(null);
-
-    const toggleNav = () => {
-        setIsNavOpen(!isNavOpen);
-    };
-
     useEffect(() => {
         const fetchCandles = async () => {
             const fetchedData = await GetCandles(time, crtytoName);
@@ -231,26 +225,8 @@ export default function Chart() {
                 } shadow-sm transition-colors duration-300`}
             >
                 <div className="p-4 flex-grow">
-                    <div
-                        onClick={toggleNav}
-                        className={`flex justify-between items-center mb-3 cursor-pointer lg:cursor-default ${
-                            darkMode ? "text-white" : "text-black"
-                        }`}
-                    >
-                        <h2 className="text-lg font-semibold">Crypto List</h2>
-                        <span className="lg:hidden">
-                            <FaBars
-                                className={`text-xl transition-colors duration-200 ${
-                                    darkMode ? "text-white hover:text-gray-400" : "text-black hover:text-gray-600"
-                                }`}
-                            />
-                        </span>
-                    </div>
-                    <ul
-                        className={`flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 custom-scrollbar transition-all duration-300 ${
-                            isNavOpen ? "block" : "hidden"
-                        } lg:block`}
-                    >
+                    <h2 className="text-lg font-semibold mb-3">Crypto List</h2>
+                    <ul className="flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 custom-scrollbar">
                         {cryptoCoins.map((item, index) => (
                             <li
                                 key={index}

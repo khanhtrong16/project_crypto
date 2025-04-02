@@ -1,0 +1,290 @@
+.bg-dark {
+    @apply bg-black text-amber-50;
+}
+
+.bg-light {
+    @apply bg-white text-black;
+}
+
+.bg-dark-header {
+    @apply bg-[#131722];
+}
+
+.bg-light-header {
+    @apply bg-[#F1F5F9];
+}
+
+.bg-dark-sidebar {
+    @apply bg-[#131722];
+}
+
+.bg-light-sidebar {
+    @apply bg-[#F1F5F9];
+}
+
+.text-dark {
+    @apply text-white;
+}
+
+.text-light {
+    @apply text-black;
+}
+
+.btn-dark {
+    @apply bg-gray-700 hover:bg-gray-600;
+}
+
+.btn-light {
+    @apply bg-gray-200 hover:bg-gray-300;
+}
+
+.select-dark {
+    @apply bg-gray-800 text-white border-gray-700 focus:border-sky-500;
+}
+
+.select-light {
+    @apply bg-white text-black border-gray-300 focus:border-sky-500;
+}
+
+.card-dark {
+    @apply bg-gray-800;
+}
+
+.card-light {
+    @apply bg-gray-200;
+}
+
+/* Shared Styling */
+.flex-center {
+    @apply flex justify-center items-center;
+}
+
+.flex-col-gap-3 {
+    @apply flex flex-col gap-3;
+}
+
+.custom-scrollbar {
+    @apply overflow-y-auto pr-1;
+}
+
+.w-28 {
+    @apply w-28;
+}
+
+.rounded-md {
+    @apply rounded-md;
+}
+
+.transition-colors {
+    @apply transition-colors duration-300;
+}
+
+.shadow-sm {
+    @apply shadow-sm;
+}
+.container {
+    @apply w-full min-h-screen flex flex-col lg:flex-row p-3 sm:p-4 lg:p-5 gap-4 transition-colors duration-300;
+}
+
+/* ... Các style khác ... */
+
+.darkModeContainer {
+    @apply bg-dark;
+}
+
+.lightModeContainer {
+    @apply bg-light;
+}
+
+.topBar.darkMode {
+    @apply bg-dark-header;
+}
+
+.topBar.lightMode {
+    @apply bg-light-header;
+}
+
+.darkModeButton.darkMode {
+    @apply btn-dark;
+}
+
+.darkModeButton.lightMode {
+    @apply btn-light;
+}
+
+.selectTime.darkMode {
+    @apply select-dark;
+}
+
+.selectTime.lightMode {
+    @apply select-light;
+}
+
+.chartWrapper.darkMode {
+    @apply border-gray-800; /* Bạn có thể cần định nghĩa class border-dark nếu muốn */
+}
+
+.chartWrapper.lightMode {
+    @apply border-gray-200; /* Tương tự với border-light */
+}
+
+.rightPanel.darkMode {
+    @apply bg-dark-sidebar text-amber-50; /* Kết hợp cả background và text */
+}
+
+.rightPanel.lightMode {
+    @apply bg-light-sidebar text-black;
+}
+
+.priceInfoWrapper.darkMode {
+    @apply card-dark;
+}
+
+.priceInfoWrapper.lightMode {
+    @apply card-light;
+}
+
+.cryptoList {
+    @apply custom-scrollbar;
+}
+
+.selectTime {
+    @apply w-28 rounded-md;
+}
+
+.darkModeButton {
+    @apply rounded-md transition-colors duration-200;
+}
+
+.topBar {
+    @apply shadow-sm transition-colors duration-300 rounded-t-lg;
+}
+
+.container {
+    @apply gap-4;
+}
+
+.leftPanelWrapper {
+    @apply flex gap-2 flex-col;
+}
+
+.topBar {
+    @apply flex flex-wrap justify-between items-center gap-3;
+    padding: 16px 24px; /* Điều chỉnh padding cho phù hợp */
+}
+
+.cryptoName {
+    @apply font-bold;
+    font-size: 1.125rem; /* text-lg */
+}
+
+@media (min-width: 640px) {
+    .cryptoName {
+        font-size: 1.25rem; /* sm:text-xl */
+    }
+}
+
+.controls {
+    @apply flex items-center gap-3;
+}
+
+.darkModeButton {
+    @apply p-2.5;
+}
+
+.selectTime {
+    @apply border-2 hover:border-gray-400 focus:outline-none transition-all duration-200;
+}
+
+.chartWrapper {
+    @apply flex-grow overflow-hidden border rounded-b-lg;
+    height: 400px; /* Giá trị mặc định */
+}
+
+@media (min-width: 640px) {
+    .chartWrapper {
+        height: 500px; /* sm:h-[500px] */
+    }
+}
+
+@media (min-width: 768px) {
+    .chartWrapper {
+        height: 600px; /* md:h-[600px] */
+    }
+}
+
+@media (min-width: 1024px) {
+    .chartWrapper {
+        height: auto; /* lg:h-full */
+    }
+}
+
+.rightPanel {
+    @apply rounded-lg flex flex-col shadow-sm transition-colors duration-300;
+}
+
+.cryptoListHeader {
+    @apply font-semibold mb-3 text-lg;
+    padding: 1rem; /* p-4 */
+}
+
+.cryptoList {
+    @apply gap-2 max-h-[calc(100vh-280px)] pr-1;
+}
+
+.cryptoListItem {
+    @apply flex items-center gap-3 p-3 rounded-md cursor-pointer transition-all duration-200;
+}
+
+.cryptoIcon {
+    @apply w-7 h-7 rounded-full object-cover;
+}
+
+.cryptoNameText {
+    @apply font-medium;
+}
+
+.priceButtonWrapper {
+    @apply p-4 border-t;
+}
+
+.getPriceButton {
+    @apply w-full px-6 py-3.5 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600 active:bg-sky-700 transition-colors duration-200 shadow-sm;
+}
+
+.priceInfoWrapper {
+    @apply rounded-lg mt-4;
+    padding: 1rem; /* p-4 */
+}
+
+.priceItem {
+    @apply flex justify-between items-center;
+}
+
+.priceLabel {
+    @apply text-sm sm:text-base;
+}
+
+.priceValue {
+    @apply font-bold text-base sm:text-lg;
+}
+
+.cryptoListItem.selected.darkMode {
+    @apply bg-gray-700;
+}
+
+.cryptoListItem.selected.lightMode {
+    @apply bg-gray-300;
+}
+
+.cryptoListItem.hover.darkMode {
+    @apply hover:bg-gray-800;
+}
+
+.cryptoListItem.hover.lightMode {
+    @apply hover:bg-gray-200;
+}
+
+.priceButtonWrapper {
+    @apply border-gray-700; /* Màu mặc định, có thể cần điều chỉnh theo theme */
+}

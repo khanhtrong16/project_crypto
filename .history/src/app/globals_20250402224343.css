@@ -1,0 +1,91 @@
+@import "tailwindcss";
+/* @import "bootstrap/dist/css/bootstrap.min.css"; */
+@import "boxicons";
+
+/* Loại bỏ margin và padding mặc định của body */
+/* Chart container styles */
+/* Dark Mode */
+.bg-dark {
+    @apply bg-black text-amber-50;
+}
+
+.bg-light {
+    @apply bg-white text-black;
+}
+
+.bg-dark-header {
+    @apply bg-[#131722];
+}
+
+.bg-light-header {
+    @apply bg-[#F1F5F9];
+}
+
+.bg-dark-sidebar {
+    @apply bg-[#131722];
+}
+
+.bg-light-sidebar {
+    @apply bg-[#F1F5F9];
+}
+
+.text-dark {
+    @apply text-white;
+}
+
+.text-light {
+    @apply text-black;
+}
+
+.btn-dark {
+    @apply bg-gray-700 hover:bg-gray-600;
+}
+
+.btn-light {
+    @apply bg-gray-200 hover:bg-gray-300;
+}
+
+.select-dark {
+    @apply bg-gray-800 text-white border-gray-700 focus:border-sky-500;
+}
+
+.select-light {
+    @apply bg-white text-black border-gray-300 focus:border-sky-500;
+}
+
+.card-dark {
+    @apply bg-gray-800;
+}
+
+.card-light {
+    @apply bg-gray-200;
+}
+
+/* Shared Styling */
+.flex-center {
+    @apply flex justify-center items-center;
+}
+
+.flex-col-gap-3 {
+    @apply flex flex-col gap-3;
+}
+
+.custom-scrollbar {
+    @apply overflow-y-auto pr-1;
+}
+
+.w-28 {
+    @apply w-28;
+}
+
+.rounded-md {
+    @apply rounded-md;
+}
+
+.transition-colors {
+    @apply transition-colors duration-300;
+}
+
+.shadow-sm {
+    @apply shadow-sm;
+}

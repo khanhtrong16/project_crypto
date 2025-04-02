@@ -3,7 +3,7 @@ import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/li
 import { CandleData, PriceData } from "@/types/interfaces";
 import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
-import { FaMoon, FaSun, FaBars } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export default function Chart() {
     const times = [
@@ -231,21 +231,15 @@ export default function Chart() {
                 } shadow-sm transition-colors duration-300`}
             >
                 <div className="p-4 flex-grow">
-                    <div
+                    <h2 className="text-lg font-semibold mb-3">Crypto List</h2>
+                    <button
                         onClick={toggleNav}
-                        className={`flex justify-between items-center mb-3 cursor-pointer lg:cursor-default ${
-                            darkMode ? "text-white" : "text-black"
+                        className={`lg:hidden px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                            darkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-300"
                         }`}
                     >
-                        <h2 className="text-lg font-semibold">Crypto List</h2>
-                        <span className="lg:hidden">
-                            <FaBars
-                                className={`text-xl transition-colors duration-200 ${
-                                    darkMode ? "text-white hover:text-gray-400" : "text-black hover:text-gray-600"
-                                }`}
-                            />
-                        </span>
-                    </div>
+                        {isNavOpen ? "Hide List" : "Show List"}
+                    </button>
                     <ul
                         className={`flex flex-col gap-2 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 custom-scrollbar transition-all duration-300 ${
                             isNavOpen ? "block" : "hidden"

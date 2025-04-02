@@ -243,6 +243,8 @@ export default function Chart() {
                                     className="w-7 h-7 rounded-full object-cover"
                                     src={item.cryptoImage || "/placeholder.svg"}
                                     alt={item.cryptoName}
+                                    width={64}
+                                    height={64}
                                 />
                                 <span className="font-medium">{item.cryptoName}</span>
                             </li>

@@ -239,10 +239,12 @@ export default function Chart() {
                                         : "hover:bg-gray-200"
                                 }`}
                             >
-                                <img
+                                <Image
                                     className="w-7 h-7 rounded-full object-cover"
                                     src={item.cryptoImage || "/placeholder.svg"}
                                     alt={item.cryptoName}
+                                    width={24}
+                                    height={24}
                                 />
                                 <span className="font-medium">{item.cryptoName}</span>
                             </li>

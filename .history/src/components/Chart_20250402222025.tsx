@@ -152,8 +152,10 @@ export default function Chart() {
             const current = parseFloat(priceCurrent.data.lastPrice);
 
             const priceOneMinute = await GetPrice1MinuteAgo(crtytoName);
-            const oneMinuteAgo = parseFloat(priceOneMinute?.toString() ?? "0");
-            SetPrices({ current, oneMinuteAgo });
+            let oneMinuteAgo: number | null = null;
+            if (priceOneMinute !== null) {
+                oneMinuteAgo = parseFloat(priceOneMinute as string); // Ép kiểu về string vì parseFloat nhận string
+            }
             // const oneMinuteAgo = parseFloat(priceOneMinute);
             SetPrices({ current, oneMinuteAgo });
         };

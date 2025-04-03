@@ -80,7 +80,16 @@ export const cryptoCoins = [
     { cryptoName: "MATICUSDT", cryptoImage: "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png" },
     { cryptoName: "OMUSDT", cryptoImage: "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png" },
 ];
-
+export const times = [
+    { value: "1m", label: "1 Minute" },
+    { value: "5m", label: "5 Minutes" },
+    { value: "15m", label: "15 Minutes" },
+    { value: "30m", label: "30 Minutes" },
+    { value: "1h", label: "1 Hour" },
+    { value: "4h", label: "4 Hours" },
+    { value: "1d", label: "1 Day" },
+    { value: "1w", label: "1 Week" },
+];
 /**
  * Get the image URL of a cryptocurrency
  * @param getCoin Cryptocurrency symbol (e.g., BTCUSDT)

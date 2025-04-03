@@ -1,7 +1,8 @@
 "use client";
-import { cryptoCoins, GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/lib/api-binance";
+
+import { GetCandles, GetCryptoInfo, GetPrice1MinuteAgo } from "@/lib/api-binance";
 import { CandleData, PriceData } from "@/types/interfaces";
-import { createChart, CandlestickSeries, HistogramSeries, UTCTimestamp, IChartApi, ISeriesApi } from "lightweight-charts";
+import { createChart, CandlestickSeries, HistogramSeries, IChartApi, ISeriesApi, UTCTimestamp } from "lightweight-charts";
 import React, { useEffect, useRef, useState } from "react";
 import { FaMoon, FaSun, FaBars } from "react-icons/fa";
 
@@ -16,75 +17,80 @@ export default function Chart() {
         { value: "1d", label: "1 Day" },
         { value: "1w", label: "1 Week" },
     ];
+
     const [time, setTime] = useState("1h");
-    const [cryptoName, setCrytoName] = useState<string>("BTCUSDT");
-    const [datas, setDatas] = useState<CandleData[]>([]);
-    const [show, setShow] = useState<boolean>(false);
-    const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
+    const [cryptoName, setCryptoName] = useState<string>("BTCUSDT");
+    const [candles, setCandles] = useState<CandleData[]>([]);
+    const [prices, setPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
     const [darkMode, setDarkMode] = useState<boolean>(true);
     const [isNavOpen, setIsNavOpen] = useState(false);
+
     const chartContainer = useRef<HTMLDivElement | null>(null);
     const chartRef = useRef<IChartApi | null>(null);
     const candlestickSeries = useRef<ISeriesApi<"Candlestick">>(null);
     const volumeSeries = useRef<ISeriesApi<"Histogram">>(null);
 
-    const toggleNav = () => {
-        setIsNavOpen(!isNavOpen);
+    const toggleNav = () => setIsNavOpen(!isNavOpen);
+    const toggleDarkMode = () => setDarkMode(!darkMode);
+
+    const fetchCandles = async () => {
+        const data = await GetCandles(time, cryptoName);
+        if (data.length > 0) setCandles(data);
     };
 
-    useEffect(() => {
-        const fetchCandles = async () => {
-            const fetchedData = await GetCandles(time, cryptoName);
-            if (fetchedData.length > 0) {
-                setDatas(fetchedData);
-            }
-        };
-        fetchCandles();
-    }, [time, cryptoName]);
+    const fetchPrices = async () => {
+        const currentPriceData = await GetCryptoInfo(cryptoName);
+        const oneMinuteAgoPriceData = await GetPrice1MinuteAgo(cryptoName);
 
-    useEffect(() => {
-        if (!chartContainer.current) return;
+        setPrices({
+            current: parseFloat(currentPriceData.data.lastPrice),
+            oneMinuteAgo: parseFloat(oneMinuteAgoPriceData?.toString() ?? "0"),
+        });
+    };
 
-        if (!chartRef.current) {
-            chartRef.current = createChart(chartContainer.current, {});
-            candlestickSeries.current = chartRef.current.addSeries(CandlestickSeries, {
-                upColor: "#26a69a",
-                downColor: "#ef5350",
-                borderVisible: false,
-                wickUpColor: "#26a69a",
-                wickDownColor: "#ef5350",
-            });
+    const initializeChart = () => {
+        if (!chartContainer.current || chartRef.current) return;
 
-            volumeSeries.current = chartRef.current.addSeries(HistogramSeries, {
-                priceScaleId: "volume",
-                color: "#26a69a",
-                priceFormat: { type: "volume" },
-            });
-
-            volumeSeries.current.priceScale().applyOptions({
-                scaleMargins: { top: 0.8, bottom: 0 },
-            });
-
-            candlestickSeries.current.priceScale().applyOptions({
-                scaleMargins: { top: 0.2, bottom: 0.3 },
-            });
-
-            chartRef.current.timeScale().applyOptions({
-                rightOffset: 10,
-                timeVisible: true,
-                secondsVisible: false,
-            });
-        }
-
-        chartRef.current.applyOptions({
+        chartRef.current = createChart(chartContainer.current, {
             layout: {
-                background: { color: darkMode ? "#131722" : "#F1F5F9" },
+                background: { color: darkMode ? "#131722" : "#FFFFFF" },
                 textColor: darkMode ? "#d1d4dc" : "#000000",
             },
             grid: {
                 vertLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
                 horzLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
             },
+        });
+
+        candlestickSeries.current = chartRef.current.addSeries(CandlestickSeries, {
+            upColor: "#26a69a",
+            downColor: "#ef5350",
+            borderVisible: false,
+            wickUpColor: "#26a69a",
+            wickDownColor: "#ef5350",
+        });
+
+        volumeSeries.current = chartRef.current.addSeries(HistogramSeries, {
+            priceScaleId: "volume",
+            color: "#26a69a",
+            priceFormat: { type: "volume" },
+        });
+
+        volumeSeries.current.priceScale().applyOptions({
+            scaleMargins: { top: 0.8, bottom: 0 },
+        });
+
+        candlestickSeries.current.priceScale().applyOptions({
+            scaleMargins: { top: 0.2, bottom: 0.3 },
+        });
+
+        chartRef.current.timeScale().applyOptions({
+            rightOffset: 10,
+            timeVisible: true,
+            secondsVisible: false,
+        });
+
+        chartRef.current.applyOptions({
             crosshair: {
                 mode: 0,
                 vertLine: {
@@ -103,59 +109,61 @@ export default function Chart() {
                 },
             },
         });
-        if (datas.length > 0 && candlestickSeries.current && volumeSeries.current) {
-            candlestickSeries.current.setData(
-                datas.map((item) => ({
-                    time: (item.openTime / 1000) as UTCTimestamp,
-                    open: item.open,
-                    high: item.high,
-                    low: item.low,
-                    close: item.close,
-                }))
-            );
-            volumeSeries.current.setData(
-                datas.map((item) => ({
-                    time: (item.openTime / 1000) as UTCTimestamp,
-                    value: item.volume,
-                    color: item.close > item.open ? "#26a69a" : "#ef5350",
-                }))
-            );
-        }
-    }, [datas, darkMode]);
+    };
+
+    const updateChart = () => {
+        if (!candlestickSeries.current || !volumeSeries.current) return;
+
+        candlestickSeries.current.setData(
+            candles.map((item) => ({
+                time: (item.openTime / 1000) as UTCTimestamp,
+                open: item.open,
+                high: item.high,
+                low: item.low,
+                close: item.close,
+            }))
+        );
+
+        volumeSeries.current.setData(
+            candles.map((item) => ({
+                time: (item.openTime / 1000) as UTCTimestamp,
+                value: item.volume,
+                color: item.close > item.open ? "#26a69a" : "#ef5350",
+            }))
+        );
+    };
+
+    useEffect(() => {
+        fetchCandles();
+    }, [time, cryptoName]);
+
+    useEffect(() => {
+        initializeChart();
+        updateChart();
+    }, [candles, darkMode]);
 
     useEffect(() => {
         const resizeChart = () => {
             if (chartRef.current && chartContainer.current) {
-                const width = chartContainer.current.clientWidth;
-                const height = chartContainer.current.clientHeight;
-                if (typeof width === "number" && typeof height === "number") {
-                    chartRef.current.resize(width, height);
-                }
+                chartRef.current.resize(chartContainer.current.clientWidth, chartContainer.current.clientHeight);
             }
         };
         window.addEventListener("resize", resizeChart);
-        return () => {
-            window.removeEventListener("resize", resizeChart);
-        };
+        return () => window.removeEventListener("resize", resizeChart);
     }, []);
+
     useEffect(() => {
-        const getPrices = async () => {
-            const priceCurrent = await GetCryptoInfo(cryptoName);
-            const current = parseFloat(priceCurrent.data.lastPrice);
+        fetchPrices();
+    }, [cryptoName]);
 
-            const priceOneMinute = await GetPrice1MinuteAgo(cryptoName);
-            const oneMinuteAgo = parseFloat(priceOneMinute?.toString() ?? "0");
-            SetPrices({ current, oneMinuteAgo });
-        };
-        getPrices();
-    }, [show, cryptoName]);
+    if (!candles.length) {
+        return (
+            <div className="flex items-center justify-center w-full h-screen">
+                <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
-    const handlePrice = () => {
-        setShow(!show);
-    };
-    const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-    };
     return (
         <div
             className={`w-full min-h-screen flex flex-col lg:flex-row p-3 sm:p-4 lg:p-5 gap-4 transition-colors duration-300 ${
@@ -164,16 +172,17 @@ export default function Chart() {
         >
             <div className="w-full lg:w-3/4 xl:w-4/5 flex gap-2 flex-col">
                 <div
-                    className={`px-3 py-4 sm:py-3 w-full flex flex-wrap justify-between items-center gap-3
-                    ${darkMode ? "bg-[#131722]" : "bg-[#F1F5F9]"}
-                    rounded-t-lg shadow-sm transition-colors duration-300`}
+                    className={`px-3 py-4 sm:py-3 w-full flex flex-wrap justify-between items-center gap-3 ${
+                        darkMode ? "bg-[#131722]" : "bg-[#F1F5F9]"
+                    } rounded-t-lg shadow-sm transition-colors duration-300`}
                 >
                     <strong className="text-lg sm:text-xl font-bold">{cryptoName}</strong>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={toggleDarkMode}
-                            className={`p-2.5 rounded-md transition-colors duration-200
-                                     ${darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"}`}
+                            className={`p-2.5 rounded-md transition-colors duration-200 ${
+                                darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-gray-300"
+                            }`}
                             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                         >
                             {darkMode ? <FaMoon size={18} /> : <FaSun size={18} />}
@@ -181,16 +190,15 @@ export default function Chart() {
                         <select
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            className={`p-2.5 w-32 rounded-md border-2 hover:border-gray-400 focus:outline-none transition-all duration-200
-                                        ${
-                                            darkMode
-                                                ? "bg-gray-800 text-white border-gray-700 focus:border-sky-500"
-                                                : "bg-white text-black border-gray-300 focus:border-sky-500"
-                                        }`}
+                            className={`p-2.5 w-32 rounded-md border-2 hover:border-gray-400 focus:outline-none transition-all duration-200 ${
+                                darkMode
+                                    ? "bg-gray-800 text-white border-gray-700 focus:border-sky-500"
+                                    : "bg-white text-black border-gray-300 focus:border-sky-500"
+                            }`}
                             aria-label="Select time frame"
                         >
-                            {times.map((item, index) => (
-                                <option key={index} value={item.value} className={`${darkMode ? "bg-gray-800" : "bg-white"} p-2`}>
+                            {times.map((item) => (
+                                <option key={item.value} value={item.value}>
                                     {item.label}
                                 </option>
                             ))}
@@ -202,13 +210,7 @@ export default function Chart() {
                         darkMode ? "border-gray-800" : "border-gray-200"
                     } h-[400px] sm:h-[500px] md:h-[600px] lg:h-full rounded-b-lg`}
                     ref={chartContainer}
-                >
-                    {datas.length === 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-opacity-50 bg-gray-100 dark:bg-gray-900">
-                            <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-                        </div>
-                    )}
-                </div>
+                ></div>
             </div>
             <div
                 className={`w-full lg:w-1/4 xl:w-1/5 rounded-lg flex flex-col ${
@@ -239,7 +241,7 @@ export default function Chart() {
                         {cryptoCoins.map((item, index) => (
                             <li
                                 key={index}
-                                onClick={() => setCrytoName(item.cryptoName)}
+                                onClick={() => setCryptoName(item.cryptoName)}
                                 className={`flex items-center gap-3 p-3 rounded-md cursor-pointer transition-all duration-200 ${
                                     cryptoName === item.cryptoName
                                         ? darkMode
@@ -260,10 +262,9 @@ export default function Chart() {
                         ))}
                     </ul>
                 </div>
-
                 <div className="p-4 border-t border-gray-700">
                     <button
-                        onClick={handlePrice}
+                        onClick={fetchPrices}
                         className="w-full px-6 py-3.5 rounded-lg bg-sky-500 text-white font-bold hover:bg-sky-600 active:bg-sky-700 transition-colors duration-200 shadow-sm"
                     >
                         Get Current Price

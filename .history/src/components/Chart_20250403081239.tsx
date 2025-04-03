@@ -44,7 +44,6 @@ export default function Chart() {
 
     useEffect(() => {
         if (!chartContainer.current) return;
-
         if (!chartRef.current) {
             chartRef.current = createChart(chartContainer.current, {});
             candlestickSeries.current = chartRef.current.addSeries(CandlestickSeries, {
@@ -76,6 +75,7 @@ export default function Chart() {
             });
         }
 
+        // Áp dụng các tùy chọn chung
         chartRef.current.applyOptions({
             layout: {
                 background: { color: darkMode ? "#131722" : "#F1F5F9" },

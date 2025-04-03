@@ -17,7 +17,7 @@ export default function Chart() {
         { value: "1w", label: "1 Week" },
     ];
     const [time, setTime] = useState("1h");
-    const [cryptoName, setCrytoName] = useState<string>("BTCUSDT");
+    const [crtytoName, setCrytoName] = useState<string>("BTCUSDT");
     const [datas, setDatas] = useState<CandleData[]>([]);
     const [show, setShow] = useState<boolean>(false);
     const [prices, SetPrices] = useState<PriceData>({ current: 0, oneMinuteAgo: 0 });
@@ -34,19 +34,29 @@ export default function Chart() {
 
     useEffect(() => {
         const fetchCandles = async () => {
-            const fetchedData = await GetCandles(time, cryptoName);
+            const fetchedData = await GetCandles(time, crtytoName);
             if (fetchedData.length > 0) {
                 setDatas(fetchedData);
             }
         };
         fetchCandles();
-    }, [time, cryptoName]);
+    }, [time, crtytoName]);
 
     useEffect(() => {
         if (!chartContainer.current) return;
 
         if (!chartRef.current) {
-            chartRef.current = createChart(chartContainer.current, {});
+            chartRef.current = createChart(chartContainer.current, {
+                layout: {
+                    background: { color: darkMode ? "#131722" : "#FFFFFF" },
+                    textColor: darkMode ? "#d1d4dc" : "#000000",
+                },
+                grid: {
+                    vertLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                    horzLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                },
+            });
+
             candlestickSeries.current = chartRef.current.addSeries(CandlestickSeries, {
                 upColor: "#26a69a",
                 downColor: "#ef5350",
@@ -56,17 +66,23 @@ export default function Chart() {
             });
 
             volumeSeries.current = chartRef.current.addSeries(HistogramSeries, {
-                priceScaleId: "volume",
+                priceScaleId: "volume", // Assign a separate price scale for volume
                 color: "#26a69a",
                 priceFormat: { type: "volume" },
             });
 
-            volumeSeries.current.priceScale().applyOptions({
+            chartRef.current.priceScale("volume").applyOptions({
+                position: "right", // Place the volume scale on the right
                 scaleMargins: { top: 0.8, bottom: 0 },
+                borderVisible: true,
+                borderColor: darkMode ? "#1e222d" : "#e0e0e0",
             });
 
             candlestickSeries.current.priceScale().applyOptions({
+                position: "left", // Keep the candlestick scale on the left
                 scaleMargins: { top: 0.2, bottom: 0.3 },
+                borderVisible: true,
+                borderColor: darkMode ? "#1e222d" : "#e0e0e0",
             });
 
             chartRef.current.timeScale().applyOptions({
@@ -74,35 +90,39 @@ export default function Chart() {
                 timeVisible: true,
                 secondsVisible: false,
             });
+
+            chartRef.current.applyOptions({
+                crosshair: {
+                    mode: 0,
+                    vertLine: {
+                        color: "#6A5ACD",
+                        width: 1,
+                        style: 1,
+                        visible: true,
+                        labelVisible: true,
+                    },
+                    horzLine: {
+                        color: "#6A5ACD",
+                        width: 1,
+                        style: 1,
+                        visible: true,
+                        labelVisible: true,
+                    },
+                },
+            });
+        } else {
+            chartRef.current.applyOptions({
+                layout: {
+                    background: { color: darkMode ? "#131722" : "#F1F5F9" },
+                    textColor: darkMode ? "#d1d4dc" : "#000000",
+                },
+                grid: {
+                    vertLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                    horzLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                },
+            });
         }
 
-        chartRef.current.applyOptions({
-            layout: {
-                background: { color: darkMode ? "#131722" : "#F1F5F9" },
-                textColor: darkMode ? "#d1d4dc" : "#000000",
-            },
-            grid: {
-                vertLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
-                horzLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
-            },
-            crosshair: {
-                mode: 0,
-                vertLine: {
-                    color: "#6A5ACD",
-                    width: 1,
-                    style: 1,
-                    visible: true,
-                    labelVisible: true,
-                },
-                horzLine: {
-                    color: "#6A5ACD",
-                    width: 1,
-                    style: 1,
-                    visible: true,
-                    labelVisible: true,
-                },
-            },
-        });
         if (datas.length > 0 && candlestickSeries.current && volumeSeries.current) {
             candlestickSeries.current.setData(
                 datas.map((item) => ({
@@ -140,15 +160,17 @@ export default function Chart() {
     }, []);
     useEffect(() => {
         const getPrices = async () => {
-            const priceCurrent = await GetCryptoInfo(cryptoName);
+            const priceCurrent = await GetCryptoInfo(crtytoName);
             const current = parseFloat(priceCurrent.data.lastPrice);
 
-            const priceOneMinute = await GetPrice1MinuteAgo(cryptoName);
+            const priceOneMinute = await GetPrice1MinuteAgo(crtytoName);
             const oneMinuteAgo = parseFloat(priceOneMinute?.toString() ?? "0");
+            SetPrices({ current, oneMinuteAgo });
+            // const oneMinuteAgo = parseFloat(priceOneMinute);
             SetPrices({ current, oneMinuteAgo });
         };
         getPrices();
-    }, [show, cryptoName]);
+    }, [show, crtytoName]);
 
     const handlePrice = () => {
         setShow(!show);
@@ -156,6 +178,10 @@ export default function Chart() {
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
     };
+
+    if (darkMode === null) {
+        return <div>Loading...</div>; // Đảm bảo rằng trạng thái darkMode được đặt sau khi client đã hydrat hóa
+    }
     return (
         <div
             className={`w-full min-h-screen flex flex-col lg:flex-row p-3 sm:p-4 lg:p-5 gap-4 transition-colors duration-300 ${
@@ -168,7 +194,7 @@ export default function Chart() {
                     ${darkMode ? "bg-[#131722]" : "bg-[#F1F5F9]"}
                     rounded-t-lg shadow-sm transition-colors duration-300`}
                 >
-                    <strong className="text-lg sm:text-xl font-bold">{cryptoName}</strong>
+                    <strong className="text-lg sm:text-xl font-bold">{crtytoName}</strong>
                     <div className="flex items-center gap-3">
                         <button
                             onClick={toggleDarkMode}
@@ -241,7 +267,7 @@ export default function Chart() {
                                 key={index}
                                 onClick={() => setCrytoName(item.cryptoName)}
                                 className={`flex items-center gap-3 p-3 rounded-md cursor-pointer transition-all duration-200 ${
-                                    cryptoName === item.cryptoName
+                                    crtytoName === item.cryptoName
                                         ? darkMode
                                             ? "bg-gray-700"
                                             : "bg-gray-300"

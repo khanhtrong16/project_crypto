@@ -44,38 +44,11 @@ export default function Chart() {
 
     useEffect(() => {
         if (!chartContainer.current) return;
-
         if (!chartRef.current) {
             chartRef.current = createChart(chartContainer.current, {});
-            candlestickSeries.current = chartRef.current.addSeries(CandlestickSeries, {
-                upColor: "#26a69a",
-                downColor: "#ef5350",
-                borderVisible: false,
-                wickUpColor: "#26a69a",
-                wickDownColor: "#ef5350",
-            });
-
-            volumeSeries.current = chartRef.current.addSeries(HistogramSeries, {
-                priceScaleId: "volume",
-                color: "#26a69a",
-                priceFormat: { type: "volume" },
-            });
-
-            volumeSeries.current.priceScale().applyOptions({
-                scaleMargins: { top: 0.8, bottom: 0 },
-            });
-
-            candlestickSeries.current.priceScale().applyOptions({
-                scaleMargins: { top: 0.2, bottom: 0.3 },
-            });
-
-            chartRef.current.timeScale().applyOptions({
-                rightOffset: 10,
-                timeVisible: true,
-                secondsVisible: false,
-            });
         }
 
+        // Áp dụng các tùy chọn chung
         chartRef.current.applyOptions({
             layout: {
                 background: { color: darkMode ? "#131722" : "#F1F5F9" },
@@ -103,6 +76,78 @@ export default function Chart() {
                 },
             },
         });
+        if (!chartRef.current) {
+            chartRef.current = createChart(chartContainer.current, {
+                layout: {
+                    background: { color: darkMode ? "#131722" : "#FFFFFF" },
+                    textColor: darkMode ? "#d1d4dc" : "#000000",
+                },
+                grid: {
+                    vertLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                    horzLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                },
+            });
+
+            candlestickSeries.current = chartRef.current.addSeries(CandlestickSeries, {
+                upColor: "#26a69a",
+                downColor: "#ef5350",
+                borderVisible: false,
+                wickUpColor: "#26a69a",
+                wickDownColor: "#ef5350",
+            });
+
+            volumeSeries.current = chartRef.current.addSeries(HistogramSeries, {
+                priceScaleId: "volume",
+                color: "#26a69a",
+                priceFormat: { type: "volume" },
+            });
+
+            volumeSeries.current.priceScale().applyOptions({
+                scaleMargins: { top: 0.8, bottom: 0 },
+            });
+
+            candlestickSeries.current.priceScale().applyOptions({
+                scaleMargins: { top: 0.2, bottom: 0.3 },
+            });
+
+            chartRef.current.timeScale().applyOptions({
+                rightOffset: 10,
+                timeVisible: true,
+                secondsVisible: false,
+            });
+
+            chartRef.current.applyOptions({
+                crosshair: {
+                    mode: 0,
+                    vertLine: {
+                        color: "#6A5ACD",
+                        width: 1,
+                        style: 1,
+                        visible: true,
+                        labelVisible: true,
+                    },
+                    horzLine: {
+                        color: "#6A5ACD",
+                        width: 1,
+                        style: 1,
+                        visible: true,
+                        labelVisible: true,
+                    },
+                },
+            });
+        } else {
+            chartRef.current.applyOptions({
+                layout: {
+                    background: { color: darkMode ? "#131722" : "#F1F5F9" },
+                    textColor: darkMode ? "#d1d4dc" : "#000000",
+                },
+                grid: {
+                    vertLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                    horzLines: { color: darkMode ? "#1e222d" : "#e0e0e0" },
+                },
+            });
+        }
+
         if (datas.length > 0 && candlestickSeries.current && volumeSeries.current) {
             candlestickSeries.current.setData(
                 datas.map((item) => ({
